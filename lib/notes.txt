@@ -1,0 +1,59 @@
+- 10 Jogadas
+- 2 arremessos a cada frame
+
+* Caso um strike ocorra na primeria jogda o jogador não tem direito a segunda jogada do frame 
+Strike é marcado por um "X" no frame
+
+* Caso os dez pinos sejam derrubados em um frame - em duas jogadas - o jogador realiza um spare
+Spare é simbolizado por um "/"
+
+* O decimo frame possui tres casas a terceira só é usada quando o jogador realiza um Strike
+
+
+/================ | ==== Pontuação aberta ==== | ================\
+- soma os pontos dos pinos derrubados
+- Ocorre quando o jogdor - em duas jogadas - derruba menos de 10 pinos
+
+
+/================ | ==== Jogada extra ==== | ================\
+caso o jogador realize um strike na primeria jogada do 10 frame ele tem direito a duas bolas extra
+caso faça um spare ele tem direito a uma bola extra
+\================ | ==== ------------ ==== | ================/
+
+/================ | ==== Pontuação Strike ==== | ================\
+caso o jogador derrube todos os pinos no frame
+ele recebe dez pontos adicionais mais os dois próximos 
+arremessos
+
+Exemplo: 
+- Placar = 20 pontos
+- relizou um spare/strike 
+- os pontos não aparecem do vizor
+- arremessou duas vezes
+- derrubou 7 pinos e 2
+- seus pontos ficam em 20 + (10 + 7 + 2) = 39 pontos
+\================ | ==== ---------------- ==== | ================/
+
+
+/================ | ==== Pontuação Spare ==== | ================\
+caso o jogador derrube todos os pinos no frame
+ele recebe dez pontos adicionais mais o próximo
+arremesso
+
+Exemplo: 
+- Placar = 20 pontos
+- relizou um spare/strike 
+- os pontos não aparecem do vizor
+- arremessou duas vezes
+- derrubou 7 pinos e 2
+- seus pontos ficam em 20 + (10 + 7) = 37 pontos
+\================ | ==== --------------- ==== | ================/
+
+https://jogarboliche.com.br/pontuacao-no-boliche/
+
+
+
+
+
+
+
