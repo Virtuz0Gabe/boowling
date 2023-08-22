@@ -37,9 +37,8 @@ class _HomePageState extends State<HomePage> {
       ),
       body: ListView.builder(
         scrollDirection: Axis.horizontal, 
-        itemCount: (9),
+        itemCount: (10),
         itemBuilder: (BuildContext context, int index){
-          Frame frame = Frame(index, listaDeJogadas[index][0], listaDeJogadas[index][1]);
           return Padding(
             padding: const EdgeInsets.all(10),
             child: Center(
@@ -50,16 +49,21 @@ class _HomePageState extends State<HomePage> {
                       width: 5,
                     ),
                   ),
-                child: Container(
-                  width: 60,
-                  height: 80,
-                  color: Colors.amber,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(frame.getSquare1()),
-                      Text(frame.getSquare2())
-                      ])
+                child: GestureDetector(
+                  onTap: () {
+                    // adicionar o valor ao respectivo frame 
+                    debugPrint("valor ${(index+1)} Adicionado");
+                  },
+                  child: Container(
+                    width: 60,
+                    height: 80,
+                    color: Colors.amber,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text((index+1).toString()),
+                        ])
+                  ),
                 ),
               ),
             ),
