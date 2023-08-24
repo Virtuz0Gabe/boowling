@@ -28,18 +28,19 @@ class _HomePageState extends State<HomePage> {
   ];
 
   List<Frame> listaDeFrames = [
-    Frame(1, " ", " ", " ", false, false),
-    Frame(2, " ", " ", " ", false, false),
-    Frame(3, " ", " ", " ", false, false),
-    Frame(4, " ", " ", " ", false, false),
-    Frame(5, " ", " ", " ", false, false),
-    Frame(6, " ", " ", " ", false, false),
-    Frame(7, " ", " ", " ", false, false),
-    Frame(8, " ", " ", " ", false, false),
-    Frame(9, " ", " ", " ", false, false),
+    Frame(1, " ", " ", " ", " ", false, false, false),
+    Frame(2, " ", " ", " ", " ", false, false, false),
+    Frame(3, " ", " ", " ", " ", false, false, false),
+    Frame(4, " ", " ", " ", " ", false, false, false),
+    Frame(5, " ", " ", " ", " ", false, false, false),
+    Frame(6, " ", " ", " ", " ", false, false, false),
+    Frame(7, " ", " ", " ", " ", false, false, false),
+    Frame(8, " ", " ", " ", " ", false, false, false),
+    Frame(9, " ", " ", " ", " ", false, false, false),
+    Frame(10," ", " ", " ", " ", false, false, false),
   ];
-  int jogadaAtual = 0;
-  int frameAtual = 0;
+  int jogadaAtualNum = 0;
+  int frameAtualNum = 0;
   int totalPontuation = 0;
 
   @override
@@ -71,9 +72,9 @@ class _HomePageState extends State<HomePage> {
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: (
-                  jogadaAtual == 0 
-                  ?  10
-                  : 10 - listaDeJogadas[frameAtual][0]
+                  jogadaAtualNum == 0 
+                  ?  11
+                  : 11 - listaDeJogadas[frameAtualNum][0]
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   return Padding(
@@ -86,18 +87,25 @@ class _HomePageState extends State<HomePage> {
                           elevation: 6,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           onPressed: () {
-                            atualizarJogadas(frameAtual, jogadaAtual, index+1);
-                            if (jogadaAtual >= 1){
-                              jogadaAtual = 0;
-                              frameAtual ++;
+                            atualizarJogadas(frameAtualNum, jogadaAtualNum, index);
+                            Frame frameAtual = atualizaFrame(frameAtualNum);
+
+                            //adicionar validação para permitir mais jogadas em Spare e Strike
+                            if (jogadaAtualNum >= 1 || frameAtual.played){
+                              
+                              debugPrint("Strike");
+                            
+                              jogadaAtualNum = 0;
+                              frameAtualNum ++;
                             } else {
-                              jogadaAtual ++;
+                              jogadaAtualNum ++;
                             }
-                            totalPontuation += index+1;
+                            totalPontuation += index;
                             List<List<int>> copiaListaDeJogadas = List.from(listaDeJogadas);
+                            
                             debugPrint(copiaListaDeJogadas.toString());
                           },
-                          child: Text((index+1).toString()),
+                          child: Text((index).toString()),
                         )
                       ],
                     ),
@@ -122,44 +130,11 @@ class _HomePageState extends State<HomePage> {
 
               return ListView.builder(
               scrollDirection: Axis.horizontal, 
-              itemCount: (9),
+              itemCount: (10),
               itemBuilder: (BuildContext context, int index){
-                Frame frameAtual = listaDeFrames[index];
-                int aux1 = listaDeJogadas[index][0];
-                int aux2 = listaDeJogadas[index][1];
 
-                switch (aux1) {
-                  case -1:
-                    frameAtual.setSquare1(" ");
-                    break;
-                  case 10:
-                    frameAtual.setSquare1(" ");
-                    frameAtual.setSquare2("X");
-                    frameAtual.setPlayed();
-                    frameAtual.setStrike();
-                    break;  
-                  default:
-                    frameAtual.setSquare1(aux1.toString());
-                }
-                if (frameAtual.played != true){
-                  switch (aux2) {
-                  case -1:
-                    frameAtual.setSquare2(" ");
-                    break;
-                  case 10:
-                    frameAtual.setSquare2("x");
-                    frameAtual.setStrike();
-                    frameAtual.setPlayed();
-                    break;
-                  default:
-                    frameAtual.setSquare2(aux2.toString());
-                    frameAtual.setPlayed();
-                  }
-                  if (aux1 + aux2 == 10 && aux1 != 10){
-                    frameAtual.setSquare2("/");
-                  }
-                }
-                
+                Frame frameAtual = atualizaFrame(index);
+                frameAtual.setPontuation(listaDeFrames);
                 
                 return Padding(
                   padding: const EdgeInsets.all(10),
@@ -180,15 +155,24 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Row(
+                              index != 9
+                              ? Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 Text(frameAtual.square1),
                                 Text(frameAtual.square2)
-                              ]),
-                              const Padding(
-                                padding: EdgeInsets.all(15),
-                                child: Text("total")
+                              ])
+                              : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(frameAtual.square1),
+                                Text(frameAtual.square2),
+                                Text(frameAtual.square3)
+                            ],
+                            ),
+                              Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: Text(frameAtual.pontuation)//pontosDoFrame.toString())
                                 )
                               ]
                             )
@@ -208,9 +192,46 @@ class _HomePageState extends State<HomePage> {
     List<List<int>> copiaListaDeJogadas = List.from(listaDeJogadas); // Copiar a lista original
     copiaListaDeJogadas[linha][coluna] = novoValor; // Fazer a edição na cópia da lista
 
-    ListOfListsObject updatedObject = ListOfListsObject(copiaListaDeJogadas, jogadaAtual);
+    ListOfListsObject updatedObject = ListOfListsObject(copiaListaDeJogadas, jogadaAtualNum);
     controller.updateList(updatedObject); // Atualizar o fluxo com o novo objeto
-}
+  }
 
+  Frame atualizaFrame (int index) {
+    Frame frameAtual = listaDeFrames[index];
+    int aux1 = listaDeJogadas[index][0];
+    int aux2 = listaDeJogadas[index][1];
 
+    switch (aux1) {
+      case -1:
+        frameAtual.setSquare1(" ");
+        break;
+      case 10:
+        frameAtual.setSquare1(" ");
+        frameAtual.setSquare2("X");
+        frameAtual.setPlayed();
+        frameAtual.setStrike();
+        break;  
+      default:
+        frameAtual.setSquare1(aux1.toString());
+    }
+    if (frameAtual.played != true){
+      switch (aux2) {
+      case -1:
+        frameAtual.setSquare2(" ");
+        break;
+      case 10:
+        frameAtual.setSquare2("x");
+        frameAtual.setStrike();
+        frameAtual.setPlayed();
+        break;
+      default:
+        frameAtual.setSquare2(aux2.toString());
+        frameAtual.setPlayed();
+      }
+      if (aux1 + aux2 == 10 && aux1 != 10){
+        frameAtual.setSquare2("/");
+      }
+    }
+    return frameAtual;
+  }
 }
