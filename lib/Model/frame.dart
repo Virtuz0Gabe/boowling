@@ -78,21 +78,21 @@ class Frame {
     // caso a próxima jogada já tenha sido efetuada
     // ou seja, eu coloquei tudo num if, pra não ficar repetindo a verificação
     if (index < 9){
-      Frame segundoFrame = listaDeFrames[index+1];
+      Frame segundoFrame = listaDeFrames[index];
+      // ======||==============| ..:: SPARE ::.. |============||====== \\
+      if (spare && segundoFrame.square1 != " "){
 
-      if (segundoFrame.played){
-        if (spare){
+        if (segundoFrame.strike){
+          pontuation = (total + 10 + 10).toString();
+        } else {
           pontuation = (total + 10 + segundoFrame.getSquare1()).toString();
-          return;
         }
-
-        if (index <  8) {
-          if (strike){
-            pontuation = (total + 10 + 10 + 10).toString();
-            return;
-          }
-        }
+      }// ======||==============| ..:: SPARE ::.. |============||========
+      
+      if (strike && segundoFrame.square1 != " "){
+        
       }
+      
     }
 
     // CASOS ESPECIAIS E CALTELÓSOS

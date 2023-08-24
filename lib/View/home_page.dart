@@ -134,7 +134,6 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (BuildContext context, int index){
 
                 Frame frameAtual = atualizaFrame(index);
-                frameAtual.setPontuation(listaDeFrames);
                 
                 return Padding(
                   padding: const EdgeInsets.all(10),
@@ -230,8 +229,11 @@ class _HomePageState extends State<HomePage> {
       }
       if (aux1 + aux2 == 10 && aux1 != 10){
         frameAtual.setSquare2("/");
+        frameAtual.setSpare();
       }
     }
+
+    frameAtual.setPontuation(listaDeFrames);
     return frameAtual;
   }
 }
