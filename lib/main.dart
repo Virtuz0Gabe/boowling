@@ -35,18 +35,6 @@ class _RootPageState extends State<RootPage> {
   Widget build(BuildContext context) {
     return Scaffold (
       body: pages[currentPage],
-      bottomNavigationBar: NavigationBar(
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.people), label: "Pontuação"),
-          NavigationDestination(icon: Icon(Icons.list_rounded), label: "Chamada"),
-        ],
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPage = index;
-          });
-        },
-        selectedIndex: currentPage,
-      ),
     ); 
   }
 }     

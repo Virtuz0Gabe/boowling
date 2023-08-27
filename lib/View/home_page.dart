@@ -82,7 +82,11 @@ class _HomePageState extends State<HomePage> {
                     jogoTerminado = true;
                   } 
                   if (jogoTerminado){
-                    return const Text("O jogo Acabou!");
+                    return const Text("O jogo Acabou!",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 192, 146, 248),
+                      fontSize: 20
+                    ),);
                   }
                 return ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -263,38 +267,46 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
-                    Container(
-                      width: 80,
-                      height: 80,
-                      color: const Color.fromARGB(255, 35, 8, 69),
-                      child: Column(
-                        children: [
-                          const Text("Hdcp Score",
-                          style: TextStyle(
-                          color: Color.fromARGB(255, 192, 146, 248)),
-                          ),
-                          Text(pontuacaoAtual().toString(),
-                          style: const TextStyle(
-                          color: Color.fromARGB(255, 192, 146, 248)),
-                          )
-                        ]
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15, left: 5),
+                      child: Container(
+                        width: 80,
+                        height: 80,
+                        color: const Color.fromARGB(255, 35, 8, 69),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Hdcp Score",
+                            style: TextStyle(
+                            color: Color.fromARGB(255, 192, 146, 248)),
+                            ),
+                            Text(pontuacaoAtual().toString(),
+                            style: const TextStyle(
+                            color: Color.fromARGB(255, 192, 146, 248)),
+                            )
+                          ]
+                        ),
                       ),
                     ),
-                    Container(
-                      width: 90,
-                      height: 80,
-                      color: const Color.fromARGB(255, 35, 8, 69),
-                      child: Column(
-                        children: [
-                          const Text("Max Possible",
-                          style: TextStyle(
-                          color: Color.fromARGB(255, 192, 146, 248)),
-                          ),
-                          Text(calculaMax(pontuacaoAtual()).toString(),
-                          style: const TextStyle(
-                          color: Color.fromARGB(255, 192, 146, 248)),
-                          )
-                        ]
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15, left: 10),
+                      child: Container(
+                        width: 90,
+                        height: 80,
+                        color: const Color.fromARGB(255, 35, 8, 69),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Max Possible",
+                            style: TextStyle(
+                            color: Color.fromARGB(255, 192, 146, 248)),
+                            ),
+                            Text(calculaMax(pontuacaoAtual()).toString(),
+                            style: const TextStyle(
+                            color: Color.fromARGB(255, 192, 146, 248)),
+                            )
+                          ]
+                        ),
                       ),
                     ),
                     ]
@@ -303,6 +315,16 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
+
+            Padding(
+              padding: const EdgeInsets.only(top: 40),
+              child: Container(
+                child: (
+                  Image.network("https://jogarboliche.com.br/wp-content/uploads/2018/09/como-jogar-boliche.jpg",
+                  height: 400,)
+                ),
+              ),
+            )
         ]),
       ),
     );
@@ -409,7 +431,7 @@ class _HomePageState extends State<HomePage> {
           break;
         case 10:
           frameAtual.setSquare1("x");
-          
+
           break;  
         default:
           frameAtual.setSquare1(aux1.toString());
