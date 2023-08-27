@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage> {
   int jogadaAtualNum = 0;
   int frameAtualNum = 0;
   int totalPontuation = 0;
+  bool jogoTerminado = false;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +51,8 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Boowling"),
+        backgroundColor: const Color.fromARGB(255, 35, 8, 69),
+        foregroundColor: const Color.fromARGB(255, 192, 146, 248),
         leading: IconButton(
           alignment:  Alignment.center,
           icon: const Icon(Icons.pin_invoke_sharp),
@@ -57,153 +60,236 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ),
-      body: Column(
-        children: [
-                        // =========================== | =========== :. BOTÕES DE PONTUAÇÃO .: =========== | ===========================\\
-          Expanded(
-            child: StreamBuilder(
-              stream: controller.listStream,
-              builder: (BuildContext context, AsyncSnapshot<ListOfListsObject> snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Erro: ${snapshot.error}');
-                }
-                if (!snapshot.hasData || snapshot.data == null) {
-                }
-              return ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: (
-                  jogadaAtualNum == 0 || jogadaAtualNum == 2 ||
-                    (frameAtualNum == 9 && (listaDeJogadas[frameAtualNum][0] == 10))
-                  ?  11
-                  : 11 - listaDeJogadas[frameAtualNum][0]
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Row(
-                      children: [
-                        FloatingActionButton(
-                          backgroundColor: Colors.amberAccent,
-                          foregroundColor: const Color.fromARGB(255, 89, 71, 7),
-                          elevation: 6,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          onPressed: () {
-                            atualizarJogadas(frameAtualNum, jogadaAtualNum, index);
-                            //adicionar validação para permitir mais jogadas em Spare e Strike
-                            Frame frameAtual = atualizaFrame(frameAtualNum);
-                            
-                            if (frameAtualNum == 9){
-                              debugPrint("FrameSpecial");
-                              jogadaAtualNum ++;
-                            } else {
-                                if (jogadaAtualNum >= 1 || frameAtual.played){
-                                jogadaAtualNum = 0;
-                                frameAtualNum ++;
-                              } else {
+      body: Container(
+        color: Colors.purple[900],
+        padding: const EdgeInsets.all(40),
+        alignment: Alignment.center ,
+        child: Column(
+          children: [
+                          // =========================== | =========== :. BOTÕES DE PONTUAÇÃO .: =========== | ===========================\\
+            Expanded(
+              child: StreamBuilder(
+                stream: controller.listStream,
+                builder: (BuildContext context, AsyncSnapshot<ListOfListsObject> snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('Erro: ${snapshot.error}');
+                  }
+                  if (!snapshot.hasData || snapshot.data == null) {
+                  }
+                  if (jogoTerminado){
+                    return const Text("O jogo Acabou!");
+                  }
+                return ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: (
+                    jogadaAtualNum == 0 || jogadaAtualNum == 2 ||
+                      (frameAtualNum == 9 && (listaDeFrames[frameAtualNum].getSquare1() == 10))
+                    ?  11
+                    : 11 - listaDeFrames[frameAtualNum].getSquare1()
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          FloatingActionButton(
+                            backgroundColor: const Color.fromARGB(255, 35, 8, 69),
+                            foregroundColor: const Color.fromARGB(255, 192, 146, 248),
+                            elevation: 6,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            onPressed: () {
+                              atualizarJogadas(frameAtualNum, jogadaAtualNum, index);
+                              //adicionar validação para permitir mais jogadas em Spare e Strike
+                              Frame frameAtual = atualizaFrame(frameAtualNum);
+                              
+                              if (frameAtualNum == 9){
+                                debugPrint("FrameSpecial");
                                 jogadaAtualNum ++;
-                              }
-                            }         
-
-                            List<List<int>> copiaListaDeJogadas = List.from(listaDeJogadas);
-                            totalPontuation =0;
-                            for (List<int> frame in listaDeJogadas){
-                              for (int ponto in frame){
-                                if (ponto != -1){
-                                  totalPontuation += ponto;
+                              } else {
+                                  if (jogadaAtualNum >= 1 || frameAtual.played){
+                                  jogadaAtualNum = 0;
+                                  frameAtualNum ++;
+                                } else {
+                                  jogadaAtualNum ++;
                                 }
-                              }
-                            }
-
-                            debugPrint("Pontuação total: $totalPontuation");
-                            
-                            debugPrint(copiaListaDeJogadas.toString());
-                          },
-                          child: Text((index).toString()),
-                        )
-                      ],
-                    ),
-                  );
-                },
-              );}
+                              }      
+                              if (listaDeFrames[9].pontuation!=" "){
+                                jogoTerminado = true;
+                              }   
+                              List<List<int>> copiaListaDeJogadas = List.from(listaDeJogadas);
+                              debugPrint(copiaListaDeJogadas.toString());
+                            },
+                            child: Text((index).toString()),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                );}
+              ),
             ),
-          ),
-          
-                              // =========================== | =========== :. PLACAR .: =========== | ===========================\\
-          Expanded(
-            child: StreamBuilder(
-              stream: controller.listStream,
-              builder: (BuildContext context, AsyncSnapshot<ListOfListsObject> snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Erro: ${snapshot.error}');
-                }
-                if (!snapshot.hasData || snapshot.data == null) {
-                  return const CircularProgressIndicator(); // ou qualquer outro widget de carregamento
-                }
-                List<List<int>> listaDeJogadas = snapshot.data!.listaDeJogadas;
-
-              return ListView.builder(
-              scrollDirection: Axis.horizontal, 
-              itemCount: (10),
-              itemBuilder: (BuildContext context, int index){
-
-                Frame frameAtual = atualizaFrame(index);
-                
-                return Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      Text(frameAtual.getIndex()),
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 5,
-                          ),
-                        ),
-                        child:Container(
-                          width: 70,
-                          height: 70,
-                          color: Colors.amber,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              index != 9
-                              ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            
+                                // =========================== | =========== :. PLACAR .: =========== | ===========================\\
+            Row(
+              children: [
+                StreamBuilder(
+                  stream: controller.listStream,
+                  builder: (BuildContext context, AsyncSnapshot<ListOfListsObject> snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Erro: ${snapshot.error}');
+                    }
+                    if (!snapshot.hasData || snapshot.data == null) {
+                      return const CircularProgressIndicator(); // ou qualquer outro widget de carregamento
+                    }
+                    List<List<int>> listaDeJogadas = snapshot.data!.listaDeJogadas;
+      
+                  return Row(
+                    children: [ Row(
+                      children: List.generate(
+                        10,
+                        (index) {
+                          Frame frameAtual = atualizaFrame(index);
+                  
+                          return Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Column(
                               children: [
-                                Text(frameAtual.square1),
-                                Text(frameAtual.square2)
-                              ])
-                              : Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text(frameAtual.square1),
-                                Text(frameAtual.square2),
-                                Text(frameAtual.square3)
-                            ],
+                                Text(frameAtual.getIndex(),
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 192, 146, 248)),
+                                ),
+                                Container(
+                                  width: 80,
+                                  height: 80,
+                                  color: const Color.fromARGB(255, 35, 8, 69),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      index != 9
+                                          ? Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    frameAtual.square1,
+                                                    style: const TextStyle(
+                                                        color: Color.fromARGB(255, 192, 146, 248)),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  alignment: Alignment.center,
+                                                  decoration: const BoxDecoration(
+                                                    border: Border(
+                                                      left: BorderSide(
+                                                          color: Color.fromARGB(255, 192, 146, 248),
+                                                          width: 1),
+                                                      bottom: BorderSide(
+                                                          color: Color.fromARGB(255, 192, 146, 248),
+                                                          width: 1),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    frameAtual.square2,
+                                                    style: const TextStyle(
+                                                        color: Color.fromARGB(255, 192, 146, 248)),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          : Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              children: [
+                                                Container(
+                                                  width: 30,
+                                                  height: 40,
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    frameAtual.square1,
+                                                    style: const TextStyle(
+                                                        color: Color.fromARGB(255, 192, 146, 248)),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: 25,
+                                                  height: 40,
+                                                  alignment: Alignment.center,
+                                                  decoration: const BoxDecoration(
+                                                    border: Border(
+                                                      left: BorderSide(
+                                                          color: Color.fromARGB(255, 192, 146, 248),
+                                                          width: 1),
+                                                      bottom: BorderSide(
+                                                          color: Color.fromARGB(255, 192, 146, 248),
+                                                          width: 1),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    frameAtual.square2,
+                                                    style: const TextStyle(
+                                                        color: Color.fromARGB(255, 192, 146, 248)),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: 25,
+                                                  height: 40,
+                                                  alignment: Alignment.center,
+                                                  decoration: const BoxDecoration(
+                                                    border: Border(
+                                                      left: BorderSide(
+                                                          color: Color.fromARGB(255, 192, 146, 248),
+                                                          width: 1),
+                                                      bottom: BorderSide(
+                                                          color: Color.fromARGB(255, 192, 146, 248),
+                                                          width: 1),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    frameAtual.square3,
+                                                    style: const TextStyle(
+                                                        color: Color.fromARGB(255, 192, 146, 248)),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(9),
+                                        child: Text(frameAtual.pontuation,
+                                            style: const TextStyle(
+                                                color: Color.fromARGB(255, 192, 146, 248))),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                              Padding(
-                                padding: const EdgeInsets.all(15),
-                                child: Text(frameAtual.pontuation)//pontosDoFrame.toString())
-                                )
-                              ]
-                            )
-                          ),
-                        ),
-                      ]
+                          );
+                        },
+                      ),
                     ),
+
+                    Text("COlocar pontuação máxima e atual")
+
+                    ]
                   );
-                }
-              );}
+                  }
+                ),
+              ],
             ),
-          ),
-      ]),
+        ]),
+      ),
     );
   }
+
+
+  // ======= |[] ==============|=================- MÉTODOS ADICIONAIS -=================|==============[]| ======= \\
   void atualizarJogadas(int linha, int coluna, int novoValor) {
     List<List<int>> copiaListaDeJogadas = List.from(listaDeJogadas); // Copiar a lista original
     copiaListaDeJogadas[linha][coluna] = novoValor; // Fazer a edição na cópia da lista
-
     ListOfListsObject updatedObject = ListOfListsObject(copiaListaDeJogadas, jogadaAtualNum);
     controller.updateList(updatedObject); // Atualizar o fluxo com o novo objeto
   }
@@ -292,7 +378,6 @@ class _HomePageState extends State<HomePage> {
           frameAtual.setSquare3(aux3.toString());
       }
     }
-
     frameAtual.setPontuation(listaDeFrames);
     return frameAtual;
   }
