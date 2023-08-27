@@ -44,9 +44,10 @@ class _HomePageState extends State<HomePage> {
   int totalPontuation = 0;
   bool jogoTerminado = false;
 
+  
+
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -66,7 +67,7 @@ class _HomePageState extends State<HomePage> {
         alignment: Alignment.center ,
         child: Column(
           children: [
-                          // =========================== | =========== :. BOTÕES DE PONTUAÇÃO .: =========== | ===========================\\
+          // =========================== | =========== :. BOTÕES DE PONTUAÇÃO .: =========== | ===========================\\
             Expanded(
               child: StreamBuilder(
                 stream: controller.listStream,
@@ -138,18 +139,12 @@ class _HomePageState extends State<HomePage> {
                     if (snapshot.hasError) {
                       return Text('Erro: ${snapshot.error}');
                     }
-                    if (!snapshot.hasData || snapshot.data == null) {
-                      return const CircularProgressIndicator(); // ou qualquer outro widget de carregamento
-                    }
-                    List<List<int>> listaDeJogadas = snapshot.data!.listaDeJogadas;
-      
                   return Row(
                     children: [ Row(
                       children: List.generate(
                         10,
                         (index) {
                           Frame frameAtual = atualizaFrame(index);
-                  
                           return Padding(
                             padding: const EdgeInsets.all(5),
                             child: Column(
@@ -260,7 +255,7 @@ class _HomePageState extends State<HomePage> {
                                         padding: const EdgeInsets.all(9),
                                         child: Text(frameAtual.pontuation,
                                             style: const TextStyle(
-                                                color: Color.fromARGB(255, 192, 146, 248))),
+                                            color: Color.fromARGB(255, 192, 146, 248))),
                                       ),
                                     ],
                                   ),
@@ -272,8 +267,40 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
-                    Text("COlocar pontuação máxima e atual")
-
+                    Container(
+                      width: 80,
+                      height: 80,
+                      color: const Color.fromARGB(255, 35, 8, 69),
+                      child: Column(
+                        children: [
+                          const Text("Hdcp Score",
+                          style: TextStyle(
+                          color: Color.fromARGB(255, 192, 146, 248)),
+                          ),
+                          Text(pontuacaoAtual().toString(),
+                          style: const TextStyle(
+                          color: Color.fromARGB(255, 192, 146, 248)),
+                          )
+                        ]
+                      ),
+                    ),
+                    Container(
+                      width: 90,
+                      height: 80,
+                      color: const Color.fromARGB(255, 35, 8, 69),
+                      child: Column(
+                        children: [
+                          const Text("Max Possible",
+                          style: TextStyle(
+                          color: Color.fromARGB(255, 192, 146, 248)),
+                          ),
+                          Text(calculaMax(pontuacaoAtual()).toString(),
+                          style: const TextStyle(
+                          color: Color.fromARGB(255, 192, 146, 248)),
+                          )
+                        ]
+                      ),
+                    ),
                     ]
                   );
                   }
@@ -292,6 +319,32 @@ class _HomePageState extends State<HomePage> {
     copiaListaDeJogadas[linha][coluna] = novoValor; // Fazer a edição na cópia da lista
     ListOfListsObject updatedObject = ListOfListsObject(copiaListaDeJogadas, jogadaAtualNum);
     controller.updateList(updatedObject); // Atualizar o fluxo com o novo objeto
+  }
+
+  int pontuacaoAtual(){
+    int total = 0;
+    for (Frame frame in listaDeFrames){
+      if(frame.pontuation != " "){
+        total = frame.getPontuation();
+      }
+    }
+    return total;
+  }
+
+  int calculaMax(int total){
+    Frame frameAtual = listaDeFrames[frameAtualNum];
+    
+    
+    if (total < frameAtualNum * 30){
+      if (!frameAtual.strike && !frameAtual.spare && frameAtual.square1!= " "){
+        return 300 - ((frameAtualNum * 30) - total + 10);
+      } else{
+      return 300 - ((frameAtualNum * 30) - total);
+      }
+       
+    } else {
+      return 300;
+    }
   }
 
   Frame atualizaFrame (int index) {
