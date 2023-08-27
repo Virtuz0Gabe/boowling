@@ -1,5 +1,6 @@
 import "package:boowling/Model/frame.dart";
 import "package:flutter/material.dart";
+import "package:flutter/rendering.dart";
 import "../Model/lista_de_jogadas.dart";
 
 
@@ -77,17 +78,15 @@ class _HomePageState extends State<HomePage> {
                   }
                   if (!snapshot.hasData || snapshot.data == null) {
                   }
+                  if (listaDeFrames[9].pontuation!=" "){
+                    jogoTerminado = true;
+                  } 
                   if (jogoTerminado){
                     return const Text("O jogo Acabou!");
                   }
                 return ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: (
-                    jogadaAtualNum == 0 || jogadaAtualNum == 2 ||
-                      (frameAtualNum == 9 && (listaDeFrames[frameAtualNum].getSquare1() == 10))
-                    ?  11
-                    : 11 - listaDeFrames[frameAtualNum].getSquare1()
-                  ),
+                  itemCount: numeroDeOpcoes(),
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding: const EdgeInsets.all(12),
@@ -113,10 +112,7 @@ class _HomePageState extends State<HomePage> {
                                 } else {
                                   jogadaAtualNum ++;
                                 }
-                              }      
-                              if (listaDeFrames[9].pontuation!=" "){
-                                jogoTerminado = true;
-                              }   
+                              }        
                               List<List<int>> copiaListaDeJogadas = List.from(listaDeJogadas);
                               debugPrint(copiaListaDeJogadas.toString());
                             },
@@ -321,6 +317,18 @@ class _HomePageState extends State<HomePage> {
     controller.updateList(updatedObject); // Atualizar o fluxo com o novo objeto
   }
 
+  int numeroDeOpcoes (){
+    if (jogadaAtualNum == 0){
+      return 11;
+    }
+    if (frameAtualNum == 9){
+      if (listaDeJogadas[frameAtualNum][jogadaAtualNum-1] == 10){
+        return 11;
+      }
+    }
+    return 11 - listaDeJogadas[frameAtualNum][jogadaAtualNum-1];
+  }
+
   int pontuacaoAtual(){
     int total = 0;
     for (Frame frame in listaDeFrames){
@@ -401,6 +409,7 @@ class _HomePageState extends State<HomePage> {
           break;
         case 10:
           frameAtual.setSquare1("x");
+          
           break;  
         default:
           frameAtual.setSquare1(aux1.toString());

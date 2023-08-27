@@ -93,7 +93,7 @@ class Frame {
     // O motivo do if segundoFrame.played, é pq tanto Spare quanto Strike só devem aparecer pontuação 
     // caso a próxima jogada já tenha sido efetuada
     // ou seja, eu coloquei tudo num if, pra não ficar repetindo a verificação
-    if (index < 9){
+    if (index < 10){
       Frame segundoFrame = listaDeFrames[index];
       // ======||==============| ..:: SPARE ::.. |============||====== \\
       if (spare && (segundoFrame.played || segundoFrame.square1 != " ")){
@@ -116,9 +116,9 @@ class Frame {
           pontuation = (total + 10 + segundoFrame.getSquare1() + segundoFrame.getSquare2()).toString();
           return;
         }
-        if (segundoFrame.strike){
+        if (segundoFrame.strike && index != 9){
           Frame terceiroFrame = listaDeFrames[index+1];
-          if (terceiroFrame.strike){
+          if (terceiroFrame.strike || terceiroFrame.square1=="x"){
             pontuation = (total + 10 + 10 + 10).toString();
             return;
           } else if (terceiroFrame.square1 != " ") {
@@ -142,8 +142,10 @@ class Frame {
 
     } else {
       if (!strike && !spare){
-        pontuation = (total + getSquare1() + getSquare2()).toString();
-        return;
+        if (listaDeFrames[index-2].pontuation != " "){
+          pontuation = (total + getSquare1() + getSquare2()).toString();
+          return;
+        }
       }
       if (spare && played && square3!= " "){
         if (square3 == "x"){
