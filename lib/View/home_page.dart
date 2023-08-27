@@ -72,7 +72,8 @@ class _HomePageState extends State<HomePage> {
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: (
-                  jogadaAtualNum == 0 
+                  jogadaAtualNum == 0 || jogadaAtualNum == 2 ||
+                    (frameAtualNum == 9 && (listaDeJogadas[frameAtualNum][0] == 10))
                   ?  11
                   : 11 - listaDeJogadas[frameAtualNum][0]
                 ),
@@ -88,20 +89,32 @@ class _HomePageState extends State<HomePage> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           onPressed: () {
                             atualizarJogadas(frameAtualNum, jogadaAtualNum, index);
-                            Frame frameAtual = atualizaFrame(frameAtualNum);
-
                             //adicionar validação para permitir mais jogadas em Spare e Strike
-                            if (jogadaAtualNum >= 1 || frameAtual.played){
-                              
-                              debugPrint("Strike");
+                            Frame frameAtual = atualizaFrame(frameAtualNum);
                             
-                              jogadaAtualNum = 0;
-                              frameAtualNum ++;
-                            } else {
+                            if (frameAtualNum == 9){
+                              debugPrint("FrameSpecial");
                               jogadaAtualNum ++;
-                            }
-                            totalPontuation += index;
+                            } else {
+                                if (jogadaAtualNum >= 1 || frameAtual.played){
+                                jogadaAtualNum = 0;
+                                frameAtualNum ++;
+                              } else {
+                                jogadaAtualNum ++;
+                              }
+                            }         
+
                             List<List<int>> copiaListaDeJogadas = List.from(listaDeJogadas);
+                            totalPontuation =0;
+                            for (List<int> frame in listaDeJogadas){
+                              for (int ponto in frame){
+                                if (ponto != -1){
+                                  totalPontuation += ponto;
+                                }
+                              }
+                            }
+
+                            debugPrint("Pontuação total: $totalPontuation");
                             
                             debugPrint(copiaListaDeJogadas.toString());
                           },
@@ -197,39 +210,86 @@ class _HomePageState extends State<HomePage> {
 
   Frame atualizaFrame (int index) {
     Frame frameAtual = listaDeFrames[index];
-    int aux1 = listaDeJogadas[index][0];
-    int aux2 = listaDeJogadas[index][1];
-
-    switch (aux1) {
-      case -1:
-        frameAtual.setSquare1(" ");
-        break;
-      case 10:
-        frameAtual.setSquare1(" ");
-        frameAtual.setSquare2("X");
-        frameAtual.setPlayed();
-        frameAtual.setStrike();
-        break;  
-      default:
-        frameAtual.setSquare1(aux1.toString());
+    bool decimoFrame = false;
+    int aux1;
+    int aux2;
+    aux1 = listaDeJogadas[index][0];
+    aux2 = listaDeJogadas[index][1];
+    
+    if (index == 9) {
+      decimoFrame = true;
     }
-    if (frameAtual.played != true){
-      switch (aux2) {
-      case -1:
-        frameAtual.setSquare2(" ");
-        break;
-      case 10:
-        frameAtual.setSquare2("x");
-        frameAtual.setStrike();
-        frameAtual.setPlayed();
-        break;
-      default:
-        frameAtual.setSquare2(aux2.toString());
-        frameAtual.setPlayed();
+    
+    if (!decimoFrame){
+      switch (aux1) {
+        case -1:
+          frameAtual.setSquare1(" ");
+          break;
+        case 10:
+          frameAtual.setSquare1(" ");
+          frameAtual.setSquare2("x");
+          frameAtual.setPlayed();
+          frameAtual.setStrike();
+          break;  
+        default:
+          frameAtual.setSquare1(aux1.toString());
       }
-      if (aux1 + aux2 == 10 && aux1 != 10){
-        frameAtual.setSquare2("/");
-        frameAtual.setSpare();
+      if (frameAtual.played != true){
+        switch (aux2) {
+        case -1:
+          frameAtual.setSquare2(" ");
+          break;
+        case 10:
+          frameAtual.setSquare2("x");
+          frameAtual.setStrike();
+          frameAtual.setPlayed();
+          break;
+        default:
+          frameAtual.setSquare2(aux2.toString());
+          frameAtual.setPlayed();
+        }
+        if (aux1 + aux2 == 10 && aux1 != 10){
+          frameAtual.setSquare2("/");
+          frameAtual.setSpare();
+        }
+      }
+    } else {
+      // == tratamento especial para a princessa Frame numero 10 == \\
+      int aux3 = listaDeJogadas[index][2];
+      switch (aux1) {
+        case -1:
+          frameAtual.setSquare1(" ");
+          break;
+        case 10:
+          frameAtual.setSquare1("x");
+          break;  
+        default:
+          frameAtual.setSquare1(aux1.toString());
+      }
+      switch (aux2) {
+        case -1:
+          frameAtual.setSquare2(" ");
+        case 10:
+          frameAtual.setSquare2("x");
+          frameAtual.setStrike();
+          frameAtual.setPlayed();
+          break; 
+        default:
+          frameAtual.setSquare2(aux2.toString());
+          frameAtual.setPlayed();
+        }
+        if (aux1 + aux2 == 10 && aux1 != 10){
+          frameAtual.setSquare2("/");
+          frameAtual.setSpare();
+        }
+      switch (aux3) {
+        case -1:
+          frameAtual.setSquare3(" ");
+        case 10:
+          frameAtual.setSquare3("x");
+          break; 
+        default:
+          frameAtual.setSquare3(aux3.toString());
       }
     }
 
