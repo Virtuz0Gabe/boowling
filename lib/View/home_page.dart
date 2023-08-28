@@ -317,7 +317,7 @@ class _HomePageState extends State<HomePage> {
             ),
 
             Padding(
-              padding: const EdgeInsets.only(top: 40),
+              padding: const EdgeInsets.only(top: 30),
               child: Container(
                 child: (
                   Image.network("https://jogarboliche.com.br/wp-content/uploads/2018/09/como-jogar-boliche.jpg",
